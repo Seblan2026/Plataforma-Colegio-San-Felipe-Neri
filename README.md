@@ -1,45 +1,58 @@
-# laughing-waddle
-Mejora de plataforma del colegio 
-# VARIABLES DE DISEÑO
-fuente_principal = "Arial"
-color_fondo = "#f4f6f9"
-color_primario = "#1a73e8"
-color_secundario = "#ffffff"
-columnas_grid = 3
+# 🎓 Plataforma Colegio San Felipe Neri
 
-print("Aplicando mejoras al sitio web...\n")
+Modernización de la plataforma educativa del Colegio San Felipe Neri mediante tecnologías web modernas, automatización e integración inteligente.
 
-# CAMBIAR FUENTE
-if fuente_principal != "":
-    print("Fuente cambiada a:", fuente_principal)
-else:
-    print("Error: fuente no definida")
+---
 
-# CAMBIAR COLOR DE FONDO
-if color_fondo != "":
-    print("Color de fondo aplicado:", color_fondo)
-else:
-    print("No se aplicó color de fondo")
+## 🚀 Objetivo del Proyecto
 
-# CREAR CUADRÍCULA (GRID)
-contador = 1
-while contador <= columnas_grid:
-    print("Creando columna:", contador)
-    contador += 1
+Desarrollar una nueva experiencia digital para estudiantes, docentes y administrativos del Colegio San Felipe Neri, mejorando:
 
-# AGREGAR CONTENIDO A LAS COLUMNAS
-for i in range(1, columnas_grid + 1):
-    if i == 1:
-        print("Columna 1: Noticias")
-    elif i == 2:
-        print("Columna 2: Información")
-    else:
-        print("Columna 3: Contacto")
+- La gestión académica
+- El acceso a información
+- La comunicación institucional
+- La experiencia de usuario
+- El rendimiento y seguridad de la plataforma
 
-# VALIDAR CONTRASTE DE COLORES
-if color_primario != color_secundario:
-    print("\nBuen contraste visual")
-else:
-    print("\nMejorar contraste de colores")
+---
 
-print("\nDiseño actualizado correctamente")
+## 🧩 Funcionalidades Planeadas
+
+- 🔐 Inicio de sesión seguro
+- 👨‍🎓 Gestión de estudiantes
+- 👩‍🏫 Panel de profesores
+- 📚 Gestión de materias
+- 📝 Registro de notas
+- 📅 Horarios académicos
+- 📢 Comunicados institucionales
+- 📱 Diseño responsive
+- ☁️ Base de datos en la nube
+- 🤖 Integración con IA
+
+---
+
+## 🛠️ Tecnologías
+
+| Área | Tecnología |
+|------|------------|
+| Frontend | React / Next.js |
+| Backend | Node.js |
+| Base de datos | PostgreSQL |
+| Autenticación | Supabase |
+| Hosting | Vercel |
+| Control de versiones | GitHub |
+
+---
+
+## 📂 Estructura del Proyecto
+
+```bash
+san-felipe-neri-platform/
+│
+├── frontend/
+├── backend/
+├── database/
+├── api/
+├── docs/
+├── assets/
+└── README.md
