@@ -56,3 +56,406 @@ san-felipe-neri-platform/
 ├── docs/
 ├── assets/
 └── README.md
+
+
+import { useState, useEffect, useRef } from "react";
+ 
+const NAV_LINKS = [
+  { label: "Inicio", href: "#hero" },
+  { label: "Nosotros", href: "#nosotros" },
+  { label: "Accesos", href: "#accesos" },
+  { label: "Noticias", href: "#noticias" },
+  { label: "Documentos", href: "#documentos" },
+  { label: "Contacto", href: "#contacto" },
+];
+ 
+const ACCESOS = [
+  { icon: "🖥️", label: "Portal Académico", sub: "Syscolegios", href: "https://www.syscolegios.com/" },
+  { icon: "🌐", label: "Plataforma Inglés", sub: "MH Education", href: "https://accounts.mheducation.com/login" },
+  { icon: "🎒", label: "Estudiantes", sub: "Recursos internos", href: "#" },
+  { icon: "📰", label: "Filiprensa", sub: "Periódico escolar", href: "https://heyzine.com/flip-book/5a31d2af15.html" },
+  { icon: "⭐", label: "Talentos", sub: "Proyectos destacados", href: "https://sites.google.com/view/colegiosanfelipeneribogota/inicio" },
+  { icon: "🎓", label: "Egresados", sub: "Comunidad alumni", href: "#" },
+  { icon: "📚", label: "Biblioteca", sub: "Catálogo digital", href: "#" },
+  { icon: "✝️", label: "Pastoral", sub: "Fe y valores", href: "#" },
+  { icon: "💳", label: "Pagos en Línea", sub: "Scotiabank Colpatria", href: "https://www.banco.scotiabankcolpatria.com/PagosElectronicos/AgreementCategory.aspx" },
+];
+ 
+const NOTICIAS = [
+  { emoji: "🎭", color: ["#FF6B6B","#FF8E53"], date: "10 Mayo 2026", title: "Semana Cultural 2026", desc: "Una celebración del talento, la creatividad y el espíritu filipense que nos une.", link: "#" },
+  { emoji: "📖", color: ["#4ECDC4","#44A08D"], date: "20 Abril 2026", title: "Edición inicio de año – Filiprensa", desc: "El periódico estudiantil vuelve con energía renovada para este nuevo año escolar.", link: "https://heyzine.com/flip-book/5a31d2af15.html" },
+  { emoji: "📋", color: ["#A18CD1","#FBC2EB"], date: "10 Dic 2025", title: "¡Matrículas abiertas 2026!", desc: "Aún estás a tiempo de hacer parte de nuestra gran familia filipense.", link: "https://youtu.be/JylYsREiZdo" },
+];
+ 
+const DOCUMENTOS = [
+  "15 de mayo – Día sin clases",
+  "Circular 507 – Juegos Filipenses",
+  "Cronograma de mayo 2026",
+  "Calendario refuerzo 2° periodo",
+  "Brochure institucional 2026",
+  "Proyecto uso del tiempo libre",
+  "Política Habeas Data",
+  "Historia de San Felipe Neri",
+  "Instructivo pago PSE en línea",
+  "Manual de Convivencia 2026",
+];
+ 
+const VALORES = [
+  { icon: "🔥", color: "#FF6B6B", title: "Fe y Espiritualidad", desc: "Formamos en valores humanos y trascendentes siguiendo el carisma filipense." },
+  { icon: "📐", color: "#F2A900", title: "Excelencia Académica", desc: "Aprendizaje riguroso, crítico y con visión de futuro para cada estudiante." },
+  { icon: "🤝", color: "#38C6F4", title: "Comunidad & Familia", desc: "Un ambiente cálido, inclusivo y colaborativo donde todos pertenecen." },
+  { icon: "🌱", color: "#27C99A", title: "Desarrollo Integral", desc: "Arte, deporte, ciencia y liderazgo: formamos seres humanos completos." },
+];
+ 
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  return [ref, visible];
+}
+ 
+function FadeIn({ children, delay = 0, className = "" }) {
+  const [ref, visible] = useInView();
+  return (
+    <div ref={ref} className={className} style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? "translateY(0)" : "translateY(32px)",
+      transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
+    }}>{children}</div>
+  );
+}
+ 
+export default function App() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
+  const [contactForm, setContactForm] = useState({ nombre: "", email: "", tel: "", msg: "" });
+  const [sent, setSent] = useState(false);
+ 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+ 
+  const scrollTo = (href) => {
+    setMenuOpen(false);
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+ 
+  const handleSend = () => { setSent(true); setTimeout(() => setSent(false), 3000); };
+ 
+  return (
+    <div style={{ fontFamily: "'DM Sans', sans-serif", background: "#F8F4EE", color: "#1A1A2E", overflowX: "hidden" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0B1F4B; }
+        ::-webkit-scrollbar-thumb { background: #F2A900; border-radius: 3px; }
+        @keyframes heroFloat { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-18px) rotate(2deg)} }
+        @keyframes pulse { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+        @keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+        @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        .acceso-card:hover { transform: translateY(-8px) !important; box-shadow: 0 20px 50px rgba(0,0,0,.25) !important; }
+        .news-card:hover { transform: translateY(-10px) !important; box-shadow: 0 24px 60px rgba(0,0,0,.15) !important; }
+        .doc-item:hover { background: rgba(242,169,0,.12) !important; transform: translateX(6px) !important; }
+        .val-card:hover { transform: translateY(-6px) scale(1.02) !important; }
+        .nav-link-item:hover { color: #F2A900 !important; }
+        .soc-btn:hover { background: #F2A900 !important; transform: translateY(-4px) !important; }
+        .btn-pulse { animation: pulse 2.5s ease infinite; }
+      `}</style>
+ 
+      {/* ── NAV ── */}
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 200,
+        background: scrolled ? "rgba(11,31,75,0.97)" : "rgba(11,31,75,0.85)",
+        backdropFilter: "blur(16px)",
+        padding: "0 2rem",
+        height: 68,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        boxShadow: scrolled ? "0 4px 40px rgba(0,0,0,.4)" : "none",
+        transition: "all .35s",
+        borderBottom: "1px solid rgba(242,169,0,.15)",
+      }}>
+        {/* Logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
+          <div style={{
+            width: 46, height: 46, borderRadius: "50%",
+            background: "linear-gradient(135deg,#F2A900,#E84B3A)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontFamily: "'Cormorant Garamond',serif", fontWeight: 800, fontSize: "1rem",
+            color: "#fff", letterSpacing: "-1px", flexShrink: 0,
+            boxShadow: "0 4px 16px rgba(242,169,0,.4)",
+          }}>SFN</div>
+          <div style={{ lineHeight: 1.25 }}>
+            <div style={{ color: "#fff", fontWeight: 700, fontSize: ".9rem" }}>Colegio</div>
+            <div style={{ color: "#F2A900", fontWeight: 700, fontSize: ".9rem" }}>San Felipe Neri</div>
+          </div>
+        </div>
+ 
+        {/* Desktop links */}
+        <div style={{ display: "flex", gap: "1.8rem", alignItems: "center" }}>
+          {NAV_LINKS.map(l => (
+            <button key={l.label} onClick={() => scrollTo(l.href)}
+              className="nav-link-item"
+              style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,.7)", fontSize: ".82rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", transition: "color .2s", padding: 0 }}>
+              {l.label}
+            </button>
+          ))}
+          <a href="https://www.syscolegios.com/" target="_blank" rel="noreferrer"
+            style={{ background: "linear-gradient(135deg,#F2A900,#d99000)", color: "#0B1F4B", padding: ".5rem 1.3rem", borderRadius: 999, fontWeight: 700, fontSize: ".8rem", textDecoration: "none", whiteSpace: "nowrap", boxShadow: "0 4px 16px rgba(242,169,0,.4)", transition: "transform .2s" }}>
+            Portal Académico →
+          </a>
+        </div>
+      </nav>
+ 
+      {/* ── HERO ── */}
+      <section id="hero" style={{ minHeight: "100vh", background: "#0B1F4B", display: "flex", alignItems: "center", position: "relative", overflow: "hidden", paddingTop: 68 }}>
+        {/* Animated background geometry */}
+        {[
+          { w:700, h:700, bg:"radial-gradient(circle,rgba(232,75,58,.5),transparent 70%)", top:"-20%", right:"-15%", delay:"0s" },
+          { w:500, h:500, bg:"radial-gradient(circle,rgba(56,198,244,.4),transparent 70%)", bottom:"-15%", left:"-10%", delay:"2s" },
+          { w:350, h:350, bg:"radial-gradient(circle,rgba(242,169,0,.35),transparent 70%)", top:"35%", left:"28%", delay:"4s" },
+        ].map((b,i) => (
+          <div key={i} style={{ position:"absolute", width:b.w, height:b.h, background:b.bg, top:b.top, right:b.right, bottom:b.bottom, left:b.left, borderRadius:"50%", filter:"blur(60px)", animation:`heroFloat 9s ease-in-out ${b.delay} infinite`, pointerEvents:"none" }} />
+        ))}
+ 
+        {/* Grid lines overlay */}
+        <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)", backgroundSize:"60px 60px", pointerEvents:"none" }} />
+ 
+        <div style={{ maxWidth:1200, margin:"0 auto", padding:"4rem 2rem", position:"relative", zIndex:1, width:"100%", display:"grid", gridTemplateColumns:"1.1fr 0.9fr", gap:"4rem", alignItems:"center" }}>
+          {/* Left */}
+          <div>
+            <div style={{ display:"inline-flex", alignItems:"center", gap:".5rem", background:"rgba(242,169,0,.12)", border:"1px solid rgba(242,169,0,.3)", color:"#F2A900", padding:".4rem 1.1rem", borderRadius:999, fontSize:".75rem", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", marginBottom:"1.8rem" }}>
+              <span style={{ animation:"pulse 2s ease infinite" }}>✦</span> Educando Líderes desde 1965
+            </div>
+            <h1 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(3rem,5.5vw,5rem)", fontWeight:800, color:"#fff", lineHeight:1.05, marginBottom:"1.5rem" }}>
+              Formando el<br /><span style={{ color:"#F2A900", display:"inline-block" }}>futuro</span> de<br />Colombia
+            </h1>
+            <p style={{ color:"rgba(255,255,255,.65)", fontSize:"1.05rem", lineHeight:1.75, maxWidth:480, marginBottom:"2.5rem" }}>
+              Más de 60 años educando líderes íntegros en Bogotá. Un espacio donde la fe, el conocimiento y la alegría se encuentran para transformar vidas.
+            </p>
+            <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap" }}>
+              <button onClick={() => scrollTo("#nosotros")}
+                style={{ background:"linear-gradient(135deg,#F2A900,#d99000)", color:"#0B1F4B", padding:".9rem 2rem", borderRadius:999, fontWeight:700, fontSize:".95rem", border:"none", cursor:"pointer", boxShadow:"0 8px 30px rgba(242,169,0,.5)", transition:"transform .2s" }}>
+                Conoce el colegio
+              </button>
+              <button onClick={() => scrollTo("#contacto")}
+                style={{ background:"transparent", color:"#fff", padding:".9rem 2rem", borderRadius:999, fontWeight:600, fontSize:".95rem", border:"2px solid rgba(255,255,255,.3)", cursor:"pointer", transition:"all .2s" }}>
+                Matrículas 2026
+              </button>
+            </div>
+ 
+            <div style={{ display:"flex", gap:"3rem", marginTop:"3rem", paddingTop:"2rem", borderTop:"1px solid rgba(255,255,255,.1)" }}>
+              {[["60+","Años de historia"],["1965","Año de fundación"],["100%","Compromiso"]].map(([n,l]) => (
+                <div key={l}>
+                  <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"2.4rem", fontWeight:800, color:"#F2A900", lineHeight:1 }}>{n}</div>
+                  <div style={{ color:"rgba(255,255,255,.45)", fontSize:".75rem", textTransform:"uppercase", letterSpacing:".07em", marginTop:".2rem" }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+ 
+          {/* Right – info cards */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:".9rem" }}>
+            {[
+              { span:2, icon:"🎭", bg:"rgba(232,75,58,.18)", border:"rgba(232,75,58,.35)", title:"Semana Cultural 2026", sub:"¡Talento y creatividad filipense en todo su esplendor!" },
+              { icon:"📚", bg:"rgba(242,169,0,.12)", border:"rgba(242,169,0,.3)", title:"Excelencia Académica", sub:"Proyectos e investigación" },
+              { icon:"⛪", bg:"rgba(56,198,244,.12)", border:"rgba(56,198,244,.3)", title:"Pastoral & Fe", sub:"Valores que transforman" },
+              { icon:"🏆", bg:"rgba(39,201,154,.12)", border:"rgba(39,201,154,.3)", title:"Juegos Filipenses", sub:"Deporte y trabajo en equipo" },
+            ].map((c,i) => (
+              <div key={i} style={{ gridColumn: c.span ? `span ${c.span}` : "auto", background:c.bg, border:`1px solid ${c.border}`, borderRadius:20, padding:"1.5rem", backdropFilter:"blur(8px)", transition:"transform .3s", cursor:"default" }}>
+                <div style={{ fontSize:"1.8rem", marginBottom:".6rem" }}>{c.icon}</div>
+                <div style={{ color:"#fff", fontWeight:700, fontSize:".9rem", marginBottom:".2rem" }}>{c.title}</div>
+                <div style={{ color:"rgba(255,255,255,.5)", fontSize:".78rem", lineHeight:1.5 }}>{c.sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+ 
+      {/* ── ACCESOS RÁPIDOS ── */}
+      <section id="accesos" style={{ background:"#0f2255", padding:"6rem 2rem" }}>
+        <FadeIn>
+          <div style={{ textAlign:"center", marginBottom:"3.5rem" }}>
+            <div style={{ display:"inline-block", background:"rgba(242,169,0,.12)", border:"1px solid rgba(242,169,0,.3)", color:"#F2A900", padding:".3rem .9rem", borderRadius:999, fontSize:".72rem", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", marginBottom:"1rem" }}>Accesos rápidos</div>
+            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,2.8rem)", fontWeight:800, color:"#fff", marginBottom:".8rem" }}>Todo lo que necesitas,<br/>en un solo lugar</h2>
+            <p style={{ color:"rgba(255,255,255,.55)", fontSize:"1rem", lineHeight:1.7 }}>Plataformas, recursos y servicios del colegio al alcance de un clic.</p>
+          </div>
+        </FadeIn>
+        <div style={{ maxWidth:1100, margin:"0 auto", display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(170px,1fr))", gap:"1rem" }}>
+          {ACCESOS.map((a,i) => (
+            <FadeIn key={a.label} delay={i * 0.06}>
+              <a href={a.href} target="_blank" rel="noreferrer"
+                className="acceso-card"
+                style={{ display:"block", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:20, padding:"1.8rem 1.2rem", textAlign:"center", textDecoration:"none", color:"#fff", transition:"all .3s", cursor:"pointer" }}>
+                <div style={{ fontSize:"2rem", marginBottom:".8rem" }}>{a.icon}</div>
+                <div style={{ fontWeight:700, fontSize:".88rem", marginBottom:".2rem" }}>{a.label}</div>
+                <div style={{ color:"rgba(255,255,255,.45)", fontSize:".74rem" }}>{a.sub}</div>
+              </a>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+ 
+      {/* ── NOSOTROS ── */}
+      <section id="nosotros" style={{ padding:"6rem 2rem", background:"#F8F4EE" }}>
+        <div style={{ maxWidth:1100, margin:"0 auto", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"5rem", alignItems:"center" }}>
+          <FadeIn>
+            <div style={{ display:"inline-block", background:"rgba(232,75,58,.1)", border:"1px solid rgba(232,75,58,.25)", color:"#E84B3A", padding:".3rem .9rem", borderRadius:999, fontSize:".72rem", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", marginBottom:"1.2rem" }}>Quiénes somos</div>
+            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,3rem)", fontWeight:800, color:"#0B1F4B", lineHeight:1.1, marginBottom:"1.2rem" }}>Una institución<br/>con alma y propósito</h2>
+            <p style={{ color:"#555", lineHeight:1.8, marginBottom:"1rem", fontSize:"1rem" }}>Desde 1965, el Colegio San Felipe Neri forma jóvenes íntegros, críticos y comprometidos con su comunidad, siguiendo el carisma del patrono filipense: alegría, amor y servicio.</p>
+            <p style={{ color:"#555", lineHeight:1.8, fontSize:"1rem", marginBottom:"2rem" }}>Ubicados en el Barrio Alcázares de Bogotá, somos un espacio de encuentro para estudiantes, familias y docentes que creen en la educación como motor de transformación social.</p>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
+              {VALORES.map((v) => (
+                <div key={v.title} className="val-card" style={{ background:"#fff", borderRadius:16, padding:"1.2rem", boxShadow:"0 4px 20px rgba(0,0,0,.06)", transition:"all .3s", cursor:"default" }}>
+                  <div style={{ fontSize:"1.5rem", marginBottom:".5rem" }}>{v.icon}</div>
+                  <div style={{ fontWeight:700, color:"#0B1F4B", fontSize:".88rem", marginBottom:".3rem" }}>{v.title}</div>
+                  <div style={{ color:"#888", fontSize:".78rem", lineHeight:1.5 }}>{v.desc}</div>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.15}>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
+              <div style={{ gridColumn:"span 2", background:"linear-gradient(135deg,#E84B3A,#c23025)", borderRadius:24, padding:"2.5rem 2rem", color:"#fff" }}>
+                <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"3.5rem", fontWeight:800, lineHeight:1 }}>60+</div>
+                <div style={{ opacity:.8, fontSize:".9rem", marginTop:".4rem" }}>Años educando líderes en Bogotá</div>
+              </div>
+              <div style={{ background:"linear-gradient(135deg,#0B1F4B,#1a3a7a)", borderRadius:24, padding:"2rem", color:"#fff", minHeight:150, display:"flex", flexDirection:"column", justifyContent:"flex-end" }}>
+                <div style={{ fontSize:"2rem" }}>🏫</div>
+                <div style={{ fontSize:".82rem", opacity:.7, marginTop:".5rem" }}>Barrio Alcázares · Bogotá</div>
+              </div>
+              <div style={{ background:"linear-gradient(135deg,#F2A900,#c98900)", borderRadius:24, padding:"2rem", color:"#fff", minHeight:150, display:"flex", flexDirection:"column", justifyContent:"flex-end" }}>
+                <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"2.5rem", fontWeight:800 }}>1965</div>
+                <div style={{ fontSize:".82rem", opacity:.8 }}>Año de fundación</div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+ 
+      {/* ── NOTICIAS ── */}
+      <section id="noticias" style={{ padding:"6rem 2rem", background:"#EEE9F8" }}>
+        <FadeIn>
+          <div style={{ textAlign:"center", marginBottom:"3.5rem" }}>
+            <div style={{ display:"inline-block", background:"rgba(56,198,244,.12)", border:"1px solid rgba(56,198,244,.3)", color:"#0096c9", padding:".3rem .9rem", borderRadius:999, fontSize:".72rem", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", marginBottom:"1rem" }}>Últimas noticias</div>
+            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,2.8rem)", fontWeight:800, color:"#0B1F4B" }}>Lo que está pasando<br/>en nuestra comunidad</h2>
+          </div>
+        </FadeIn>
+        <div style={{ maxWidth:1100, margin:"0 auto", display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))", gap:"1.5rem" }}>
+          {NOTICIAS.map((n,i) => (
+            <FadeIn key={n.title} delay={i*0.1}>
+              <div className="news-card" style={{ background:"#fff", borderRadius:24, overflow:"hidden", boxShadow:"0 4px 20px rgba(0,0,0,.07)", transition:"all .35s", cursor:"pointer" }}>
+                <div style={{ height:190, background:`linear-gradient(135deg,${n.color[0]},${n.color[1]})`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"3.5rem" }}>{n.emoji}</div>
+                <div style={{ padding:"1.5rem" }}>
+                  <div style={{ color:"#aaa", fontSize:".75rem", fontWeight:700, textTransform:"uppercase", letterSpacing:".07em", marginBottom:".5rem" }}>{n.date}</div>
+                  <div style={{ color:"#0B1F4B", fontWeight:700, fontSize:"1rem", lineHeight:1.4, marginBottom:".6rem" }}>{n.title}</div>
+                  <div style={{ color:"#777", fontSize:".85rem", lineHeight:1.6, marginBottom:"1rem" }}>{n.desc}</div>
+                  <a href={n.link} target="_blank" rel="noreferrer" style={{ color:"#E84B3A", fontWeight:700, fontSize:".85rem", textDecoration:"none" }}>Leer más →</a>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+ 
+      {/* ── DOCUMENTOS ── */}
+      <section id="documentos" style={{ padding:"6rem 2rem", background:"#fff" }}>
+        <FadeIn>
+          <div style={{ textAlign:"center", marginBottom:"3.5rem" }}>
+            <div style={{ display:"inline-block", background:"rgba(39,201,154,.1)", border:"1px solid rgba(39,201,154,.3)", color:"#1a9970", padding:".3rem .9rem", borderRadius:999, fontSize:".72rem", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", marginBottom:"1rem" }}>Documentos & Circulares</div>
+            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,2.8rem)", fontWeight:800, color:"#0B1F4B" }}>Información de interés</h2>
+            <p style={{ color:"#888", fontSize:"1rem", lineHeight:1.7, marginTop:".5rem" }}>Descarga circulares, cronogramas y documentos importantes.</p>
+          </div>
+        </FadeIn>
+        <div style={{ maxWidth:900, margin:"0 auto", display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:".9rem" }}>
+          {DOCUMENTOS.map((d,i) => (
+            <FadeIn key={d} delay={i*0.05}>
+              <div className="doc-item" style={{ display:"flex", alignItems:"center", gap:"1rem", padding:"1rem 1.3rem", borderRadius:14, background:"#F8F4EE", border:"1px solid #e8e0d0", cursor:"pointer", transition:"all .25s" }}>
+                <div style={{ width:8, height:8, borderRadius:"50%", background:"#E84B3A", flexShrink:0 }} />
+                <span style={{ fontWeight:500, fontSize:".88rem", color:"#0B1F4B" }}>{d}</span>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+ 
+      {/* ── CONTACTO ── */}
+      <section id="contacto" style={{ padding:"6rem 2rem", background:"#0B1F4B" }}>
+        <FadeIn>
+          <div style={{ textAlign:"center", marginBottom:"3.5rem" }}>
+            <div style={{ display:"inline-block", background:"rgba(242,169,0,.12)", border:"1px solid rgba(242,169,0,.3)", color:"#F2A900", padding:".3rem .9rem", borderRadius:999, fontSize:".72rem", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", marginBottom:"1rem" }}>Contáctanos</div>
+            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,2.8rem)", fontWeight:800, color:"#fff" }}>Estamos aquí para ti</h2>
+            <p style={{ color:"rgba(255,255,255,.55)", fontSize:"1rem", lineHeight:1.7, marginTop:".5rem" }}>Escríbenos o visítanos. Con gusto te atendemos.</p>
+          </div>
+        </FadeIn>
+        <div style={{ maxWidth:1000, margin:"0 auto", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"4rem", alignItems:"start" }}>
+          <FadeIn>
+            <div style={{ display:"flex", flexDirection:"column", gap:"1.5rem" }}>
+              {[
+                { icon:"📍", label:"Dirección", val:"Cr. 27 C # 71-80 · Barrio Alcázares · Bogotá D.C." },
+                { icon:"📞", label:"Teléfonos", val:"322 458 13 69 – Secretaría\n319 512 96 50 – WhatsApp" },
+                { icon:"✉️", label:"Correo principal", val:"csfn@sanfelipeneribogota.edu.co" },
+                { icon:"🕐", label:"Horario", val:"Lunes a viernes · 7:00 am – 4:00 pm" },
+              ].map(c => (
+                <div key={c.label} style={{ display:"flex", gap:"1rem", alignItems:"flex-start" }}>
+                  <div style={{ width:44, height:44, borderRadius:12, background:"rgba(242,169,0,.12)", border:"1px solid rgba(242,169,0,.25)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.1rem", flexShrink:0 }}>{c.icon}</div>
+                  <div>
+                    <div style={{ color:"rgba(255,255,255,.45)", fontSize:".73rem", textTransform:"uppercase", letterSpacing:".07em", marginBottom:".2rem" }}>{c.label}</div>
+                    <div style={{ color:"#fff", fontSize:".9rem", lineHeight:1.6, whiteSpace:"pre-line" }}>{c.val}</div>
+                  </div>
+                </div>
+              ))}
+              {/* Social */}
+              <div style={{ display:"flex", gap:".8rem", marginTop:".5rem" }}>
+                {[
+                  { href:"https://www.facebook.com/pages/Colegio-San-Felipe-Neri-Bogot%C3%A1/454330267969658", icon:"📘" },
+                  { href:"https://www.youtube.com/channel/UCLs0EMLM5wJMS0RZyT72R8A", icon:"▶️" },
+                  { href:"https://www.instagram.com/felipeneribogota", icon:"📸" },
+                ].map(s => (
+                  <a key={s.href} href={s.href} target="_blank" rel="noreferrer" className="soc-btn"
+                    style={{ width:44, height:44, borderRadius:"50%", background:"rgba(255,255,255,.08)", border:"1px solid rgba(255,255,255,.15)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.1rem", textDecoration:"none", transition:"all .25s" }}>
+                    {s.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.15}>
+            <div style={{ display:"flex", flexDirection:"column", gap:".9rem" }}>
+              {[
+                { key:"nombre", placeholder:"Tu nombre completo", type:"text" },
+                { key:"email", placeholder:"Correo electrónico", type:"email" },
+                { key:"tel", placeholder:"Número de contacto", type:"tel" },
+              ].map(f => (
+                <input key={f.key} type={f.type} placeholder={f.placeholder} value={contactForm[f.key]}
+                  onChange={e => setContactForm(p => ({ ...p, [f.key]: e.target.value }))}
+                  style={{ background:"rgba(255,255,255,.07)", border:"1px solid rgba(255,255,255,.15)", borderRadius:12, padding:".9rem 1.2rem", color:"#fff", fontSize:".9rem", outline:"none", fontFamily:"'DM Sans',sans-serif", width:"100%" }} />
+              ))}
+              <textarea placeholder="¿En qué podemos ayudarte?" rows={4} value={contactForm.msg}
+                onChange={e => setContactForm(p => ({ ...p, msg: e.target.value }))}
+                style={{ background:"rgba(255,255,255,.07)", border:"1px solid rgba(255,255,255,.15)", borderRadius:12, padding:".9rem 1.2rem", color:"#fff", fontSize:".9rem", outline:"none", fontFamily:"'DM Sans',sans-serif", resize:"none", width:"100%" }} />
+              <button onClick={handleSend}
+                style={{ background: sent ? "linear-gradient(135deg,#27C99A,#1a9970)" : "linear-gradient(135deg,#F2A900,#d99000)", color: sent ? "#fff" : "#0B1F4B", fontWeight:700, fontSize:".95rem", padding:"1rem", borderRadius:12, border:"none", cursor:"pointer", transition:"all .3s", boxShadow:"0 8px 24px rgba(242,169,0,.35)" }}>
+                {sent ? "✓ Mensaje enviado" : "Enviar mensaje ✦"}
+              </button>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+ 
+      {/* ── FOOTER ── */}
+      <footer style={{ background:"#050d20", color:"rgba(255,255,255,.4)", textAlign:"center", padding:"1.5rem", fontSize:".8rem" }}>
+        © 2026 Colegio San Felipe Neri · Bogotá D.C. ·{" "}
+        <a href="http://sanfelipeneribogota.edu.co/admon/login.php" target="_blank" rel="noreferrer" style={{ color:"#F2A900", textDecoration:"none" }}>Administración</a>
+      </footer>
+    </div>
+  );
+}
