@@ -25,38 +25,10 @@ Desarrollar una nueva experiencia digital para estudiantes, docentes y administr
 - 📝 Registro de notas
 - 📅 Horarios académicos
 - 📢 Comunicados institucionales
-- 📱 Diseño responsive
-- ☁️ Base de datos en la nube
-- 🤖 Integración con IA
-
----
-
-## 🛠️ Tecnologías
-
-| Área | Tecnología |
-|------|------------|
-| Frontend | React / Next.js |
-| Backend | Node.js |
-| Base de datos | PostgreSQL |
-| Autenticación | Supabase |
-| Hosting | Vercel |
-| Control de versiones | GitHub |
 
 ---
 
 ## 📂 Estructura del Proyecto
-
-```bash
-san-felipe-neri-platform/
-│
-├── frontend/
-├── backend/
-├── database/
-├── api/
-├── docs/
-├── assets/
-└── README.md
-
 
 import { useState, useEffect, useRef } from "react";
  
